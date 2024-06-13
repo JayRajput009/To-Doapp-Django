@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from todoapp.models import Todo
 
 
@@ -6,7 +6,7 @@ from todoapp.models import Todo
 
 #for creating a todo
 def create(request):
-    if request == "POST":
+    if request.method == "POST":
         data = request.POST
         title = data.get('title')
         description = data.get('description')
@@ -15,15 +15,19 @@ def create(request):
 
         Todo.objects.create(
             todotitle = title,
-            tododesctiption = description,
+            tododescription = description,
             todostarttime = starttime,
             todoendtime = endtime
         )
 
-        todorow = Todo.objects.all()
-        
-        
+    queryset = Todo.objects.all()
+
+    return render(request, 'index.html', context={'todo':queryset})
 
 
+#for delete and element
 
-    return render(request, 'index.html')
+def delete(requet,id):
+    queryset = Todo.objects.get(id = id)
+    queryset.delete()
+    return redirect('/')
